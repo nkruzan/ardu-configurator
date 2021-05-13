@@ -47,7 +47,7 @@ var CONFIG,
     RXFAIL_CONFIG,
     VTX_CONFIG,
     ADVANCED_CONFIG,
-    INAV_PID_CONFIG,
+    ARDUPILOT_PID_CONFIG,
     PID_ADVANCED,
     FILTER_CONFIG,
     SENSOR_STATUS,
@@ -371,7 +371,7 @@ var FC = {
             pidSumLimit: null
         };
 
-        INAV_PID_CONFIG = {
+        ARDUPILOT_PID_CONFIG = {
             asynchronousMode: null,
             accelerometerTaskFrequency: null,
             attitudeTaskFrequency: null,
@@ -813,7 +813,7 @@ var FC = {
         }
     },
     getRangefinderNames: function () {
-        return [ "NONE", "HCSR04", "SRF10", "INAV_I2C", "VL53L0X", "MSP", "UIB", "Benewake TFmini"];
+        return [ "NONE", "HCSR04", "SRF10", "ARDUPILOT_I2C", "VL53L0X", "MSP", "UIB", "Benewake TFmini"];
     },
     getOpticalFlowNames: function () {
         if (semver.gte(CONFIG.flightControllerVersion, "2.7.0")) {

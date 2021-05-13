@@ -258,8 +258,8 @@ gulp.task('apps', gulp.series('dist', function(done) {
         buildDir: appsDir,
         platforms: getPlatforms(),
         flavor: 'normal',
-        macIcns: './images/inav.icns',
-        winIco: './images/inav.ico',
+        macIcns: './images/ARDUPILOT.icns',
+        winIco: './images/ARDUPILOT.ico',
         version: get_nw_version()
     });
     builder.on('log', console.log);
@@ -280,7 +280,7 @@ function get_nw_version() {
 
 function get_release_filename(platform, ext) {
     var pkg = require('./package.json');
-    return 'INAV-Configurator_' + platform + '_' + pkg.version + '.' + ext;
+    return 'ARDUPILOT-Configurator_' + platform + '_' + pkg.version + '.' + ext;
 }
 
 gulp.task('release-win32', function() {
@@ -293,7 +293,7 @@ gulp.task('release-win32', function() {
     archive.on('warning', function(err) { throw err; });
     archive.on('error', function(err) { throw err; });
     archive.pipe(output);
-    archive.directory(src, 'INAV Configurator');
+    archive.directory(src, 'ARDUPILOT Configurator');
     return archive.finalize();
 });
 
@@ -307,7 +307,7 @@ gulp.task('release-win64', function() {
     archive.on('warning', function(err) { throw err; });
     archive.on('error', function(err) { throw err; });
     archive.pipe(output);
-    archive.directory(src, 'INAV Configurator');
+    archive.directory(src, 'ARDUPILOT Configurator');
     return archive.finalize();
 });
 
@@ -339,7 +339,7 @@ gulp.task('release-osx64', function(done) {
     archive.on('warning', function(err) { throw err; });
     archive.on('error', function(err) { throw err; });
     archive.pipe(output);
-    archive.directory(src, 'INAV Configurator.app');
+    archive.directory(src, 'ARDUPILOT Configurator.app');
     output.on('close', function() {
         if (getArguments().notarize) {
             const notarizeArgs = ['macapptool', '-v', '1', 'notarize'];
@@ -372,7 +372,7 @@ function releaseLinux(bits) {
         archive.on('warning', function(err) { throw err; });
         archive.on('error', function(err) { throw err; });
         archive.pipe(output);
-        archive.directory(src, 'INAV Configurator');
+        archive.directory(src, 'ARDUPILOT Configurator');
         return archive.finalize();
     }
 }

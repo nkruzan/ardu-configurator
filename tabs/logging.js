@@ -222,6 +222,11 @@ TABS.logging.initialize = function (callback) {
 
     function prepare_file() {
         // create or load the file
+        chrome.fileSystem.chooseEntry({type: 'saveFile', suggestedName: 'ARDUPILOT_data_log', accepts: [{extensions: ['csv']}]}, function(entry) {
+            if (!entry) {
+                console.log('No file selected');
+                return;
+            }
 
         const date = new Date();
         const filename = 'inav_data_log_' + date.getFullYear() + '-'  + zeroPad(date.getMonth() + 1, 2) + '-'

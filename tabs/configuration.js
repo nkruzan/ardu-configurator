@@ -36,7 +36,7 @@ TABS.configuration.initialize = function (callback, scrollPosition) {
         mspHelper.load3dConfig,
         mspHelper.loadSensorAlignment,
         mspHelper.loadAdvancedConfig,
-        mspHelper.loadINAVPidConfig,
+        mspHelper.loadARDUPILOTPidConfig,
         mspHelper.loadSensorConfig,
         mspHelper.loadVTXConfig,
         mspHelper.loadMixerConfig,
@@ -58,7 +58,7 @@ TABS.configuration.initialize = function (callback, scrollPosition) {
         mspHelper.saveArmingConfig,
         mspHelper.saveLooptimeConfig,
         mspHelper.saveAdvancedConfig,
-        mspHelper.saveINAVPidConfig,
+        mspHelper.saveARDUPILOTPidConfig,
         mspHelper.saveSensorConfig,
         mspHelper.saveVTXConfig,
         saveCraftName,
@@ -314,6 +314,91 @@ TABS.configuration.initialize = function (callback, scrollPosition) {
 
         $i2cSpeed.change();
 
+        var $looptime = $("#looptime");
+
+        var $gyroLpf = $("#gyro-lpf"),
+            $gyroLpfMessage = $('#gyrolpf-info');
+
+        var values = FC.getGyroLpfValues();
+
+        for (i in values) {
+            if (values.hasOwnProperty(i)) {
+                //noinspection JSUnfilteredForInLoop
+                $gyroLpf.append('<option value="' + i + '">' + values[i].label + '</option>');
+            }
+        }
+
+        $gyroLpf.val(ARDUPILOT_PID_CONFIG.gyroscopeLpf);
+
+        $gyroLpf.change(function () {
+            ARDUPILOT_PID_CONFIG.gyroscopeLpf = $gyroLpf.val();
+
+            GUI.fillSelect(
+                $looptime,
+                FC.getLooptimes()[FC.getGyroLpfValues()[ARDUPILOT_PID_CONFIG.gyroscopeLpf].tick].looptimes,
+                FC_CONFIG.loopTime,
+                'Hz'
+            );
+            $looptime.val(FC.getLooptimes()[FC.getGyroLpfValues()[ARDUPILOT_PID_CONFIG.gyroscopeLpf].tick].defaultLooptime);
+            $looptime.change();
+
+            $gyroLpfMessage.hide();
+            $gyroLpfMessage.removeClass('ok-box');
+            $gyroLpfMessage.removeClass('info-box');
+            $gyroLpfMessage.removeClass('warning-box');
+
+            if (MIXER_CONFIG.platformType == PLATFORM_MULTIROTOR || MIXER_CONFIG.platformType == PLATFORM_TRICOPTER) {
+                switch (parseInt(ARDUPILOT_PID_CONFIG.gyroscopeLpf, 10)) {
+                    case 0:
+                        $gyroLpfMessage.html(chrome.i18n.getMessage('gyroLpfSuggestedMessage'));
+                        $gyroLpfMessage.addClass('ok-box');
+                        $gyroLpfMessage.show();
+                        break;
+                    case 1:
+                        $gyroLpfMessage.html(chrome.i18n.getMessage('gyroLpfWhyNotHigherMessage'));
+                        $gyroLpfMessage.addClass('info-box');
+                        $gyroLpfMessage.show();
+                        break;
+                    case 2:
+                        $gyroLpfMessage.html(chrome.i18n.getMessage('gyroLpfWhyNotSlightlyHigherMessage'));
+                        $gyroLpfMessage.addClass('info-box');
+                        $gyroLpfMessage.show();
+                        break
+                    case 3:
+                        $gyroLpfMessage.html(chrome.i18n.getMessage('gyroLpfNotAdvisedMessage'));
+                        $gyroLpfMessage.addClass('info-box');
+                        $gyroLpfMessage.show();
+                        break;
+                    case 4:
+                    case 5:
+                        $gyroLpfMessage.html(chrome.i18n.getMessage('gyroLpfNotFlyableMessage'));
+                        $gyroLpfMessage.addClass('warning-box');
+                        $gyroLpfMessage.show();
+                        break;
+                }
+
+            }
+        });
+
+        $gyroLpf.change();
+
+        $looptime.val(FC_CONFIG.loopTime);
+        $looptime.change(function () {
+            FC_CONFIG.loopTime = $(this).val();
+
+            if (FC_CONFIG.loopTime < 500) {
+                $('#looptime-warning').show();
+            } else {
+                $('#looptime-warning').hide();
+            }
+
+            if (ARDUPILOT_PID_CONFIG.asynchronousMode == 0) {
+                //All task running together
+                ADVANCED_CONFIG.gyroSyncDenominator = Math.floor(FC_CONFIG.loopTime / FC.getGyroLpfValues()[ARDUPILOT_PID_CONFIG.gyroscopeLpf].tick);
+            }
+        });
+        $looptime.change();
+
         var $sensorAcc = $('#sensor-acc'),
             $sensorMag = $('#sensor-mag'),
             $sensorBaro = $('#sensor-baro'),
@@ -403,8 +488,10 @@ TABS.configuration.initialize = function (callback, scrollPosition) {
             }
 
             googleAnalytics.sendEvent('Setting', 'GPSEnabled', FC.isFeatureEnabled('GPS', features) ? "true" : "false");
+            googleAnalytics.sendEvent("Platform", helper.platform.getById(MIXER_CONFIG.platformType).name, "LPF: " + FC.getGyroLpfValues()[ARDUPILOT_PID_CONFIG.gyroscopeLpf].label + " | Looptime: " + FC_CONFIG.loopTime);
 
             googleAnalytics.sendEvent('Setting', 'Looptime', FC_CONFIG.loopTime);
+            googleAnalytics.sendEvent('Setting', 'GyroLpf', FC.getGyroLpfValues()[ARDUPILOT_PID_CONFIG.gyroscopeLpf].label);
             googleAnalytics.sendEvent('Setting', 'I2CSpeed', $('#i2c_speed').children("option:selected").text());
 
             googleAnalytics.sendEvent('Board', 'Accelerometer', FC.getAccelerometerNames()[SENSOR_CONFIG.accelerometer]);
