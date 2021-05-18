@@ -1,5 +1,4 @@
-/*global nwdialog*/
-'use strict';
+//'use strict';
 
 TABS.logging = {};
 TABS.logging.initialize = function (callback) {
