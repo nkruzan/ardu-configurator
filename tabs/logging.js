@@ -228,7 +228,7 @@ TABS.logging.initialize = function (callback) {
                 console.log('No file selected');
                 return;
             }
-
+        });
         const date = new Date();
         const filename = 'inav_data_log_' + date.getFullYear() + '-'  + zeroPad(date.getMonth() + 1, 2) + '-'
                 + zeroPad(date.getDate(), 2) + '_' + zeroPad(date.getHours(), 2) + zeroPad(date.getMinutes(), 2)
