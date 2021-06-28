@@ -28,6 +28,10 @@ var set_stream_rates = function(rate,target_system,target_component) {
 
 }
 
+var autopilot_version_request = function(){
+    mavParserObj.send(new mavlink20.messages.autopilot_version_request(),255);
+}
+
 var preflight_accel_cal = function(target_system,target_component) {
 
     if (target_system == undefined )target_system = SYSID;
@@ -508,7 +512,7 @@ var MSP = {
             set_stream_rates(4,goodpackets[0]._header.srcSystem,goodpackets[0]._header.srcComponent); 
             this.streamrate = 4; 
             ParamsObj.getAll(); // todo delay this? - this immediately starts param fetch
-
+            autopilot_version_request();
         }
 
         // some form of valid mavlink means we can consider ourselves connected as far as the GUI is concerned

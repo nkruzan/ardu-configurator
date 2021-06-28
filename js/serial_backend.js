@@ -286,6 +286,7 @@ function onOpen(openInfo) {
         set_stream_rates(); //buzz?
 
         ParamsObj.getAll(); // todo delay this? - this immediately starts param fetch
+        autopilot_version_request();
 
         update_dataflash_global();
 
