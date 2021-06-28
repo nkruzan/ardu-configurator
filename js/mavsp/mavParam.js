@@ -106,6 +106,7 @@ function paramHandler(msg) {
     // alert gui its finished the 'down
     if (msg.param_index == msg.param_count-1 ) {
         update_params_complete();
+        mavParserObj.send(new mavlink20.messages.autopilot_version_request(),255);
     }
 
 }

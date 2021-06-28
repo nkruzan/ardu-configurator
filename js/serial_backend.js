@@ -555,8 +555,7 @@ function update_params_complete() {
    // alert("Param Download Complete - exit and reenter any tab to refresh gui");
 
     //GUI.tab_switch_cleanup();
-    var version_req = new mavlink20.messages.autopilot_version_request() ;
-    mavParserObj.send(version_req,255);
+
     
     $(".params_global").css( "background-color","#22dd44"  );  // green=done
 
